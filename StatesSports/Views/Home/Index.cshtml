@@ -1,0 +1,33 @@
+﻿@model StatesSports.Models.StateTeamViewModel
+
+<br /><br />
+<div class="container">
+    <div class="form-group">
+        @*Creates drop-downs for both State and Team*@
+        @if (ViewBag.StateList != null)
+        {
+            @Html.DropDownListFor(model => model.StateId, ViewBag.StateList as SelectList, "-Select a State-", new { @class = "form-control" })
+        }
+    </div>
+    <div class="form-group">
+            @Html.DropDownListFor(model => model.TeamId, new SelectList(" "), "-Show Teams-", new { @class = "form-control" })            
+    </div>
+</div>
+<script src="~/Scripts/jquery-1.10.2.min.js"></script>
+
+<script>
+    @*Ready when the DOM has been loaded*@
+    $(document).ready(function () {
+        @*When StateId changes, change event is triggered*@
+        $("#StateId").change(function () {
+            @*Runs GetTeamList(), and passes in StateId*@
+            $.get("/Home/GetTeamList", { StateId: $("#StateId").val() }, function (data) {
+                $("#TeamId").empty();
+                @*Uses Json data from the function to append to the Team drop-down*@
+                $.each(data, function (index, row) {
+                    $("#TeamId").append("<option value='"+row.TeamId+"'>"+row.TeamName+"</option>")
+                });
+            });
+        })
+    });
+</script>
